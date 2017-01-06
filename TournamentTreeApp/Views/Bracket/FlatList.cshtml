@@ -1,0 +1,117 @@
+﻿@model TournamentsTreeApp.Controllers.MinimalDivision
+
+@{
+    ViewBag.Title = "FlatBracket";
+}
+
+<link rel="stylesheet" href="~/Content/jquery.bracket.john.css" />
+
+<h1>Tournament: @Model.TournamentName</h1>
+<h2>Division: @Model.Name</h2>
+<h3 style="color:red">@Model.Title</h3>
+
+<style>
+    /*I am doing this to allow my style not to be overritten by bootstrap.css*/
+    .label {
+        font-size: inherit;
+        color: inherit;
+        text-align: inherit;
+        vertical-align: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+        border-radius: inherit;
+        display: inherit;
+    }
+
+
+    /*html, body, */
+    #wrapper {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    #wrapper {
+        position: relative;
+    }
+
+    #top, #middle, #bottom {
+        position: absolute;
+    }
+
+    #top {
+        height: 50px;
+        width: 100%;
+        background: grey;
+    }
+
+    #middle {
+        top: 50px;
+        bottom: 50px;
+        width: 100%;
+        position: relative;
+        /*background: black;
+        color: white;*/
+    }
+
+    #bottom {
+        bottom: 0;
+        height: 50px;
+        width: 100%;
+        background: grey;
+    }
+</style>
+
+
+
+<script>
+
+    var iisApplication = "";
+
+    if (window.location.pathname.split('/').length > 3)
+        iisApplication = '/' + window.location.pathname.split('/')[1];
+
+    $.getJSON(iisApplication + "/api/Division?divisionId=@Model.Id.ToString()", function (data) {
+        teams = data.data.bracket.init.teams[0];
+        console.warn("data loaded!");
+
+        $(function () {
+            var hook = $('#middle');
+
+            var jQBracket = $('<div class="jQBracket"></div>');
+            hook.append(jQBracket);
+            var container = $('<table></table>').appendTo(jQBracket);
+
+            var tableRow;
+            for (var i = 0; i < teams.length; i++) {
+                name = teams[i];
+                if (i % 4 == 0)
+                    tableRow = $('<tr><td></td></tr>').appendTo(container);
+                var tableCell = $('<td style="padding:8px;"></td>').appendTo(tableRow);
+                var cellEl = $('<td style="padding:8px;"></td>').appendTo(tableRow);
+                var tEl = $('<div class="team"></div>').appendTo(cellEl);
+                var nEl = $('<div class="label"></div>').appendTo(tEl);
+                //const nSc = $('<div class="schoolLabel"></div>').appendTo(tEl);
+
+                if (name.indexOf("|") > 0) {
+
+                    var ntEl = $('<div>' + name.split("|")[0] + '</div><div class="schoolLabel">' + name.split("|")[1] + '</div>');
+                    nEl.append(ntEl);
+                }
+            };
+        });
+
+    });
+
+
+
+</script>
+
+<div id="wrapper">
+    <div id="middle"></div>
+</div>
+
+
+
+
+

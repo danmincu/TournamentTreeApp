@@ -1,0 +1,469 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="TournamentTreeAppModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Division">
+          <Key>
+            <PropertyRef Name="DivisionId" />
+          </Key>
+          <Property Name="DivisionId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Id" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="255" />
+          <Property Name="TournamentId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DrawBracket" Type="bit" Nullable="false" />
+          <Property Name="Bracket" Type="nvarchar(max)" />
+          <Property Name="OrderId" Type="int" />
+          <Property Name="RoundRobin" Type="bit" Nullable="false" />
+          <Property Name="DoubleElimination" Type="bit" Nullable="false" />
+          <Property Name="NoSecondaryFinal" Type="bit" Nullable="false" />
+          <Property Name="NoComebackFromLooserBracket" Type="bit" Nullable="false" />
+          <Property Name="ConsolidationRound" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Participant">
+          <Key>
+            <PropertyRef Name="ParticipantId" />
+          </Key>
+          <Property Name="ParticipantId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="TournamentId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SchoolId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Dummy" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ParticipantDivisionInt">
+          <Key>
+            <PropertyRef Name="ParticipantDivisionIntId" />
+          </Key>
+          <Property Name="ParticipantDivisionIntId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ParticipantId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DivisionId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="OrderId" Type="int" />
+        </EntityType>
+        <EntityType Name="School">
+          <Key>
+            <PropertyRef Name="SchoolId" />
+          </Key>
+          <Property Name="SchoolId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="TournamentId" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Tournament">
+          <Key>
+            <PropertyRef Name="TournamentId" />
+          </Key>
+          <Property Name="TournamentId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Date" Type="date" />
+          <Property Name="Location" Type="nvarchar" MaxLength="100" />
+          <Property Name="Options" Type="nvarchar(max)" />
+          <Property Name="Settings" Type="xml" />
+          <Property Name="Logo" Type="varbinary(max)" />
+          <Property Name="Title" Type="nvarchar" MaxLength="255" />
+          <Property Name="RoundRobin" Type="bit" Nullable="false" />
+          <Property Name="ConsolidationRound" Type="bit" Nullable="false" />
+          <Property Name="DoubleElimination" Type="bit" Nullable="false" />
+          <Property Name="NoSecondaryFinal" Type="bit" Nullable="false" />
+          <Property Name="NoComebackFromLooserBracket" Type="bit" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Division_Tournament">
+          <End Role="Tournament" Type="Self.Tournament" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Division" Type="Self.Division" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tournament">
+              <PropertyRef Name="TournamentId" />
+            </Principal>
+            <Dependent Role="Division">
+              <PropertyRef Name="TournamentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Participant_School">
+          <End Role="School" Type="Self.School" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Participant" Type="Self.Participant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="School">
+              <PropertyRef Name="SchoolId" />
+            </Principal>
+            <Dependent Role="Participant">
+              <PropertyRef Name="SchoolId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Participant_Tournament">
+          <End Role="Tournament" Type="Self.Tournament" Multiplicity="1" />
+          <End Role="Participant" Type="Self.Participant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tournament">
+              <PropertyRef Name="TournamentId" />
+            </Principal>
+            <Dependent Role="Participant">
+              <PropertyRef Name="TournamentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ParticipantDivisionInt_Division">
+          <End Role="Division" Type="Self.Division" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ParticipantDivisionInt" Type="Self.ParticipantDivisionInt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Division">
+              <PropertyRef Name="DivisionId" />
+            </Principal>
+            <Dependent Role="ParticipantDivisionInt">
+              <PropertyRef Name="DivisionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ParticipantDivisionInt_Participant">
+          <End Role="Participant" Type="Self.Participant" Multiplicity="1" />
+          <End Role="ParticipantDivisionInt" Type="Self.ParticipantDivisionInt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Participant">
+              <PropertyRef Name="ParticipantId" />
+            </Principal>
+            <Dependent Role="ParticipantDivisionInt">
+              <PropertyRef Name="ParticipantId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_School_Tournament">
+          <End Role="Tournament" Type="Self.Tournament" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="School" Type="Self.School" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tournament">
+              <PropertyRef Name="TournamentId" />
+            </Principal>
+            <Dependent Role="School">
+              <PropertyRef Name="TournamentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TournamentTreeAppModelStoreContainer">
+          <EntitySet Name="Division" EntityType="Self.Division" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Participant" EntityType="Self.Participant" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ParticipantDivisionInt" EntityType="Self.ParticipantDivisionInt" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="School" EntityType="Self.School" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tournament" EntityType="Self.Tournament" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Division_Tournament" Association="Self.FK_Division_Tournament">
+            <End Role="Tournament" EntitySet="Tournament" />
+            <End Role="Division" EntitySet="Division" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Participant_School" Association="Self.FK_Participant_School">
+            <End Role="School" EntitySet="School" />
+            <End Role="Participant" EntitySet="Participant" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Participant_Tournament" Association="Self.FK_Participant_Tournament">
+            <End Role="Tournament" EntitySet="Tournament" />
+            <End Role="Participant" EntitySet="Participant" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ParticipantDivisionInt_Division" Association="Self.FK_ParticipantDivisionInt_Division">
+            <End Role="Division" EntitySet="Division" />
+            <End Role="ParticipantDivisionInt" EntitySet="ParticipantDivisionInt" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ParticipantDivisionInt_Participant" Association="Self.FK_ParticipantDivisionInt_Participant">
+            <End Role="Participant" EntitySet="Participant" />
+            <End Role="ParticipantDivisionInt" EntitySet="ParticipantDivisionInt" />
+          </AssociationSet>
+          <AssociationSet Name="FK_School_Tournament" Association="Self.FK_School_Tournament">
+            <End Role="Tournament" EntitySet="Tournament" />
+            <End Role="School" EntitySet="School" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="TournamentTreeAppModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Division">
+          <Key>
+            <PropertyRef Name="DivisionId" />
+          </Key>
+          <Property Name="DivisionId" Type="Guid" Nullable="false" />
+          <Property Name="Id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TournamentId" Type="Guid" Nullable="false" />
+          <Property Name="DrawBracket" Type="Boolean" Nullable="false" />
+          <Property Name="Bracket" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OrderId" Type="Int32" />
+          <NavigationProperty Name="Tournament" Relationship="Self.FK_Division_Tournament" FromRole="Division" ToRole="Tournament" />
+          <NavigationProperty Name="ParticipantDivisionInts" Relationship="Self.FK_ParticipantDivisionInt_Division" FromRole="Division" ToRole="ParticipantDivisionInt" />
+          <Property Name="RoundRobin" Type="Boolean" Nullable="false" />
+          <Property Name="DoubleElimination" Type="Boolean" Nullable="false" />
+          <Property Name="NoSecondaryFinal" Type="Boolean" Nullable="false" />
+          <Property Name="NoComebackFromLooserBracket" Type="Boolean" Nullable="false" />
+          <Property Name="ConsolidationRound" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Participant">
+          <Key>
+            <PropertyRef Name="ParticipantId" />
+          </Key>
+          <Property Name="ParticipantId" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TournamentId" Type="Guid" Nullable="false" />
+          <Property Name="SchoolId" Type="Guid" Nullable="false" />
+          <Property Name="Dummy" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="School" Relationship="Self.FK_Participant_School" FromRole="Participant" ToRole="School" />
+          <NavigationProperty Name="Tournament" Relationship="Self.FK_Participant_Tournament" FromRole="Participant" ToRole="Tournament" />
+          <NavigationProperty Name="ParticipantDivisionInts" Relationship="Self.FK_ParticipantDivisionInt_Participant" FromRole="Participant" ToRole="ParticipantDivisionInt" />
+        </EntityType>
+        <EntityType Name="ParticipantDivisionInt">
+          <Key>
+            <PropertyRef Name="ParticipantDivisionIntId" />
+          </Key>
+          <Property Name="ParticipantDivisionIntId" Type="Guid" Nullable="false" />
+          <Property Name="ParticipantId" Type="Guid" Nullable="false" />
+          <Property Name="DivisionId" Type="Guid" Nullable="false" />
+          <Property Name="OrderId" Type="Int32" />
+          <NavigationProperty Name="Division" Relationship="Self.FK_ParticipantDivisionInt_Division" FromRole="ParticipantDivisionInt" ToRole="Division" />
+          <NavigationProperty Name="Participant" Relationship="Self.FK_ParticipantDivisionInt_Participant" FromRole="ParticipantDivisionInt" ToRole="Participant" />
+        </EntityType>
+        <EntityType Name="School">
+          <Key>
+            <PropertyRef Name="SchoolId" />
+          </Key>
+          <Property Name="SchoolId" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TournamentId" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="Participants" Relationship="Self.FK_Participant_School" FromRole="School" ToRole="Participant" />
+          <NavigationProperty Name="Tournament" Relationship="Self.FK_School_Tournament" FromRole="School" ToRole="Tournament" />
+        </EntityType>
+        <EntityType Name="Tournament">
+          <Key>
+            <PropertyRef Name="TournamentId" />
+          </Key>
+          <Property Name="TournamentId" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Precision="0" />
+          <Property Name="Location" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Options" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Settings" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Logo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Title" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Divisions" Relationship="Self.FK_Division_Tournament" FromRole="Tournament" ToRole="Division" />
+          <NavigationProperty Name="Participants" Relationship="Self.FK_Participant_Tournament" FromRole="Tournament" ToRole="Participant" />
+          <NavigationProperty Name="Schools" Relationship="Self.FK_School_Tournament" FromRole="Tournament" ToRole="School" />
+          <Property Name="RoundRobin" Type="Boolean" Nullable="false" />
+          <Property Name="ConsolidationRound" Type="Boolean" Nullable="false" />
+          <Property Name="DoubleElimination" Type="Boolean" Nullable="false" />
+          <Property Name="NoSecondaryFinal" Type="Boolean" Nullable="false" />
+          <Property Name="NoComebackFromLooserBracket" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Division_Tournament">
+          <End Role="Tournament" Type="Self.Tournament" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Division" Type="Self.Division" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tournament">
+              <PropertyRef Name="TournamentId" />
+            </Principal>
+            <Dependent Role="Division">
+              <PropertyRef Name="TournamentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ParticipantDivisionInt_Division">
+          <End Role="Division" Type="Self.Division" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ParticipantDivisionInt" Type="Self.ParticipantDivisionInt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Division">
+              <PropertyRef Name="DivisionId" />
+            </Principal>
+            <Dependent Role="ParticipantDivisionInt">
+              <PropertyRef Name="DivisionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Participant_School">
+          <End Role="School" Type="Self.School" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Participant" Type="Self.Participant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="School">
+              <PropertyRef Name="SchoolId" />
+            </Principal>
+            <Dependent Role="Participant">
+              <PropertyRef Name="SchoolId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Participant_Tournament">
+          <End Role="Tournament" Type="Self.Tournament" Multiplicity="1" />
+          <End Role="Participant" Type="Self.Participant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tournament">
+              <PropertyRef Name="TournamentId" />
+            </Principal>
+            <Dependent Role="Participant">
+              <PropertyRef Name="TournamentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ParticipantDivisionInt_Participant">
+          <End Role="Participant" Type="Self.Participant" Multiplicity="1" />
+          <End Role="ParticipantDivisionInt" Type="Self.ParticipantDivisionInt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Participant">
+              <PropertyRef Name="ParticipantId" />
+            </Principal>
+            <Dependent Role="ParticipantDivisionInt">
+              <PropertyRef Name="ParticipantId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_School_Tournament">
+          <End Role="Tournament" Type="Self.Tournament" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="School" Type="Self.School" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tournament">
+              <PropertyRef Name="TournamentId" />
+            </Principal>
+            <Dependent Role="School">
+              <PropertyRef Name="TournamentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TournamentTreeAppEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Divisions" EntityType="Self.Division" />
+          <EntitySet Name="Participants" EntityType="Self.Participant" />
+          <EntitySet Name="ParticipantDivisionInts" EntityType="Self.ParticipantDivisionInt" />
+          <EntitySet Name="Schools" EntityType="Self.School" />
+          <EntitySet Name="Tournaments" EntityType="Self.Tournament" />
+          <AssociationSet Name="FK_Division_Tournament" Association="Self.FK_Division_Tournament">
+            <End Role="Tournament" EntitySet="Tournaments" />
+            <End Role="Division" EntitySet="Divisions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ParticipantDivisionInt_Division" Association="Self.FK_ParticipantDivisionInt_Division">
+            <End Role="Division" EntitySet="Divisions" />
+            <End Role="ParticipantDivisionInt" EntitySet="ParticipantDivisionInts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Participant_School" Association="Self.FK_Participant_School">
+            <End Role="School" EntitySet="Schools" />
+            <End Role="Participant" EntitySet="Participants" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Participant_Tournament" Association="Self.FK_Participant_Tournament">
+            <End Role="Tournament" EntitySet="Tournaments" />
+            <End Role="Participant" EntitySet="Participants" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ParticipantDivisionInt_Participant" Association="Self.FK_ParticipantDivisionInt_Participant">
+            <End Role="Participant" EntitySet="Participants" />
+            <End Role="ParticipantDivisionInt" EntitySet="ParticipantDivisionInts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_School_Tournament" Association="Self.FK_School_Tournament">
+            <End Role="Tournament" EntitySet="Tournaments" />
+            <End Role="School" EntitySet="Schools" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="TournamentTreeAppModelStoreContainer" CdmEntityContainer="TournamentTreeAppEntities">
+          <EntitySetMapping Name="Divisions">
+            <EntityTypeMapping TypeName="TournamentTreeAppModel.Division">
+              <MappingFragment StoreEntitySet="Division">
+                <ScalarProperty Name="ConsolidationRound" ColumnName="ConsolidationRound" />
+                <ScalarProperty Name="NoComebackFromLooserBracket" ColumnName="NoComebackFromLooserBracket" />
+                <ScalarProperty Name="NoSecondaryFinal" ColumnName="NoSecondaryFinal" />
+                <ScalarProperty Name="DoubleElimination" ColumnName="DoubleElimination" />
+                <ScalarProperty Name="RoundRobin" ColumnName="RoundRobin" />
+                <ScalarProperty Name="DivisionId" ColumnName="DivisionId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="TournamentId" ColumnName="TournamentId" />
+                <ScalarProperty Name="DrawBracket" ColumnName="DrawBracket" />
+                <ScalarProperty Name="Bracket" ColumnName="Bracket" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Participants">
+            <EntityTypeMapping TypeName="TournamentTreeAppModel.Participant">
+              <MappingFragment StoreEntitySet="Participant">
+                <ScalarProperty Name="ParticipantId" ColumnName="ParticipantId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TournamentId" ColumnName="TournamentId" />
+                <ScalarProperty Name="SchoolId" ColumnName="SchoolId" />
+                <ScalarProperty Name="Dummy" ColumnName="Dummy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ParticipantDivisionInts">
+            <EntityTypeMapping TypeName="TournamentTreeAppModel.ParticipantDivisionInt">
+              <MappingFragment StoreEntitySet="ParticipantDivisionInt">
+                <ScalarProperty Name="ParticipantDivisionIntId" ColumnName="ParticipantDivisionIntId" />
+                <ScalarProperty Name="ParticipantId" ColumnName="ParticipantId" />
+                <ScalarProperty Name="DivisionId" ColumnName="DivisionId" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Schools">
+            <EntityTypeMapping TypeName="TournamentTreeAppModel.School">
+              <MappingFragment StoreEntitySet="School">
+                <ScalarProperty Name="SchoolId" ColumnName="SchoolId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TournamentId" ColumnName="TournamentId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tournaments">
+            <EntityTypeMapping TypeName="TournamentTreeAppModel.Tournament">
+              <MappingFragment StoreEntitySet="Tournament">
+                <ScalarProperty Name="NoComebackFromLooserBracket" ColumnName="NoComebackFromLooserBracket" />
+                <ScalarProperty Name="NoSecondaryFinal" ColumnName="NoSecondaryFinal" />
+                <ScalarProperty Name="DoubleElimination" ColumnName="DoubleElimination" />
+                <ScalarProperty Name="ConsolidationRound" ColumnName="ConsolidationRound" />
+                <ScalarProperty Name="RoundRobin" ColumnName="RoundRobin" />
+                <ScalarProperty Name="TournamentId" ColumnName="TournamentId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="Options" ColumnName="Options" />
+                <ScalarProperty Name="Settings" ColumnName="Settings" />
+                <ScalarProperty Name="Logo" ColumnName="Logo" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

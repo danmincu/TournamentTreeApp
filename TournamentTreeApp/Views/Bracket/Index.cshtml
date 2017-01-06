@@ -1,0 +1,145 @@
+﻿@model TournamentsTreeApp.Controllers.MinimalDivision
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<link rel="stylesheet" href="~/Content/jquery.bracket.john.css" />
+<script type="text/javascript" src="~/Content/jquery.bracket.john.js"></script>
+
+<h1>Tournament: @Model.TournamentName</h1>
+<h2>Division: @Model.Name</h2>
+<h3 style="color:red">@Model.Title</h3>
+@*<p>@Html.ActionLink("Print this page..", "PdfPrintDivision","Tournaments", new { id=Model.TournamentId, divisionId = Model.Id }, null)</p>*@
+
+<style>
+    @@media print {
+        * {
+            color: inherit;
+            text-shadow: inherit;
+            background: initial;
+            box-shadow: inherit;
+        }
+
+        .label {
+            border: inherit;
+        }
+    }
+
+
+    /*I am doing this to allow my style not to be overritten by bootstrap.css*/
+    .label {
+        font-size: inherit;
+        color: inherit;
+        text-align: inherit;
+        vertical-align: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+        border-radius: inherit;
+        display: inherit;
+    }
+
+
+    /*html, body, */
+    #wrapper {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    #wrapper {
+        position: relative;
+    }
+
+    #top, #middle, #bottom {
+        position: absolute;
+    }
+
+    #top {
+        height: 50px;
+        width: 100%;
+        background: grey;
+    }
+
+    #middle {
+        top: 50px;
+        bottom: 50px;
+        width: 100%;
+        position: relative;
+        /*background: black;
+        color: white;*/
+    }
+
+    #bottom {
+        bottom: 0;
+        height: 50px;
+        width: 100%;
+        background: grey;
+    }
+</style>
+
+
+
+<script>
+    var iisApplication = "";
+
+    if (window.location.pathname.split('/').length > 3)
+        iisApplication = '/' + window.location.pathname.split('/')[1];
+
+    $.getJSON(iisApplication + "/api/Division?divisionId=@Model.Id.ToString()", function (data) {
+        minimalData = data.data.bracket.init;
+
+        /* Called whenever bracket is modified
+         *
+         * data:     changed bracket object in format given to init
+         * userData: optional data given when bracket is created.
+         */
+        function saveFn(data, userData) {
+            var json = JSON.stringify(data)
+            $.post(iisApplication + "/Divisions/SaveResults?divisionId=@Model.Id.ToString()", json, function (data) {
+                console.log(data);
+            },'json');
+
+            //$('#saveOutput').text('POST ' + userData + ' ' + json)
+            //console.log(json);
+            /* You probably want to do something like this
+            jQuery.ajax("rest/"+userData, {contentType: 'application/json',
+                                          dataType: 'json',
+                                          type: 'post',
+                                          data: json})
+            */
+        }
+
+        function swap(t1, t2, divId)
+        {
+           // console.log(encodeURIComponent(t1) + " " + encodeURIComponent(t2) + " " + divId);
+            $.getJSON(iisApplication + "/Divisions/Swap?p1=" + encodeURIComponent(t1) + "&p2=" + encodeURIComponent(t2) + "&divisionId=" + divId, function (data) {
+                console.log(data);
+                });
+
+        }
+
+        $(function () {
+            //var container = $('#minimal .demo');
+            var container = $('#middle');
+            container.bracket({
+                init: minimalData,
+                skipConsolationRound: data.data.bracket.skipConsolationRound,
+                hideTools: true,
+                save: saveFn,
+                swap: swap,
+                userData: "http://myapi"
+            });
+
+            //var data = container.bracket('data')
+            //$('#dataOutput').text(JSON.stringify(data))
+        })
+    });
+
+
+
+</script>
+
+<div id="wrapper">
+    <div id="middle"></div>
+</div>

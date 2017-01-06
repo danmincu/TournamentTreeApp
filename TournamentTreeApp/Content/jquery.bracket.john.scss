@@ -1,0 +1,410 @@
+﻿/*
+ * jQuery Bracket
+ *
+ * Copyright (c) 2011-2015, Teijo Laine,
+ * http://aropupu.fi/bracket/
+ *
+ * Licenced under the MIT licence
+ */
+$winColor: #ddaa00;
+$loseColor: #cccccc;
+$thirdColor: #996633;
+$fourthColor: #667788;
+
+$connectorColor: #666666;
+
+//$boxHeight: 22px;
+//$boxPadding: 3px;
+
+$boxHeight: 40px;
+$boxPadding: 1px;
+
+
+span.checkmark {    
+    display:inline-block;
+    width: 22px;
+    height:22px;    
+    -ms-transform: scale(0.7) rotate(45deg); /* IE 9 */
+    -webkit-transform: scale(0.7) rotate(45deg); /* Chrome, Safari, Opera */    
+    transform: scale(0.8) rotate(45deg);        
+}
+
+div.checkmark_circle {
+    position: absolute;
+    width:22px;
+    height:22px;
+    background-color: rgba(54, 54, 54, 0.06);
+    border-radius:11px;
+    left:0;
+    top:0;
+    //visibility:hidden;
+}
+div.checkmark_stem {
+    position: absolute;
+    width:3px;
+    height:13px;
+    background-color:green;
+    left:11px;
+    top:4px;
+}
+
+div.checkmark_kick {
+    position: absolute;
+    width:5px;
+    height:3px;
+    background-color:green;
+    left:7px;
+    top:14px;
+}
+
+div.jQBracket {
+  font-family: "Arial";
+  font-size: 14px;
+  position: relative;
+  .tools {
+    position: absolute;
+    top: 0px;
+    color: white;
+  }
+  .tools span {
+    cursor: pointer;
+    margin: 5px;
+    display: block;
+    text-align: center;
+    width: 18px;
+    height: 18px;
+    background-color: #666666;
+  }
+  .tools span:hover {
+    background-color: #999999;
+  }
+  .finals {
+    float: right;
+    right: 0px;
+    clear: right;
+    position: relative;
+  }
+  .bracket {
+    float: right;
+    clear: left;
+  }
+  .loserBracket {
+    float: right;
+    clear: left;
+    position: relative;
+  }
+  .round {
+    position: relative;
+    width: 180px;
+    margin-right: 40px;
+    float: left;
+  }
+  .match {
+    position: relative;
+  }
+  .hiddenMatch{
+      visibility:hidden;
+  }
+  .editable {
+    cursor: pointer;
+  }
+  .dragged
+      {
+      transform: rotate(5deG) translate(-30px);      
+  }
+  .team {
+    position: relative;
+    z-index: 1;
+    float: left;    
+    background-color: #eeeeee;
+    width: 180px;
+    height:40px;
+  ///  height: 30px;
+    cursor: default;
+    border-radius: 5px;
+    border-bottom: 1px groove #ffffff;
+  //  padding-left:12px;
+    &:first-child {      
+    margin-bottom: 3px;
+   // border-bottom: 1px solid #999999;
+    }
+    input {
+      font-size: 12px;
+      padding: 0;
+      width: inherit;
+      border: none;
+      margin: 0;
+    }
+    div.label {       
+      top:2px;
+      left:4px;
+      padding: $boxPadding;
+      position: absolute;      
+      width: 150px;      
+      height: $boxHeight;
+      white-space: nowrap;
+      overflow: hidden;
+      text-align:center;
+      border-radius:unset;
+      font-size: 85%;
+      font-weight:bold;
+      //text-shadow: 0.1px 0.2px #666666;
+      &[disabled] {
+        cursor: default;
+      }
+    }
+
+    div.schoolLabel {
+      padding: $boxPadding;
+      position: absolute;
+      top:20px;
+      width: 160px;
+      text-align:center;
+     // height: $boxHeight;
+    //  white-space: nowrap;
+      font-weight:initial;
+      //text-shadow:initial;    
+      overflow: hidden;
+      font-size: 80%;      
+      //border-top: 1px dashed #999999;
+      &[disabled] {
+        cursor: default;
+      }
+    }
+
+
+    div.score {
+       border-top:10px;
+      float: right;
+      padding: $boxPadding;
+      //background-color: rgba(255, 255, 255, 0.3);
+      text-align: center;
+      width: 24px;
+      height:40px;
+      margin-top:8px;
+      &[disabled] {
+        color: #999999;
+        cursor: default;
+      }
+    }
+    div.label input.error,
+    div.score input.error {
+      background-color: #ffcccc;
+    }
+    &.np {
+      background-color: #666666;
+      color: #eeeeee;
+    }
+    &.na {
+      background-color: #999999;
+      color: #cccccc;
+    }
+    &.win {
+      color: #333333;
+    }
+    &.win div.score {
+      color: #006600;
+    }
+    &.lose div.score {
+      color: #990000;
+      visibility:hidden;
+    }
+    &.lose {
+      background-color: #dddddd;
+      color: #999999;
+    }
+    &.tie div.score {
+      color: blue;
+    }
+    &.highlightWinner {
+      background-color: $winColor;
+      color: black;
+    }
+    &.highlightLoser {
+      background-color: $loseColor;
+      color: black;
+    }
+    &.highlight {
+      background-color: #33cc00;
+      color: black;
+    }
+  }
+  .teamContainer {
+    z-index: 1;
+    position: relative;
+    float: left;
+  }
+  .connector {
+    border: 2px solid $connectorColor;
+    border-left-style: none;
+    position: absolute;
+    z-index: 1;
+    div.connector {
+      border: none;
+      border-bottom: 2px solid $connectorColor;
+      height: 0px;
+      position: absolute;
+    }
+    &.highlightWinner,
+    div.connector.highlightWinner {
+      border-color: $winColor;
+    }
+    &.highlightLoser,
+    div.connector.highlightLoser {
+      border-color: $loseColor;
+    }
+    &.highlight,
+    div.connector.highlight {
+      border-color: #00cc00;
+    }
+  }
+  .np .connector,
+  .np .connector div.connector {
+    border-color: #222222;
+  }
+  .bubble {
+    height: $boxHeight;
+    line-height: $boxHeight;
+    width: 30px;
+    right: -35px;
+    position: absolute;
+    text-align: center;
+    font-size: 11px;
+    &.third {
+      background-color: $thirdColor;
+      color: #dd9955;
+    }
+    &.fourth {
+      background-color: $fourthColor;
+      color: #ccccdd;
+    }
+    &:after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      width: 0;
+      height: 0;
+      border-top: 5px solid transparent;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+    &:after {
+      left: -5px;
+      border-left: 0;
+    }
+    &.third:after {
+      border-right: 6px solid $thirdColor;
+    }
+    &.fourth:after {
+      border-right: 6px solid $fourthColor;
+    }
+  }
+  .highlightWinner {
+    .bubble {
+      background-color: $winColor;
+      color: #996600;
+      &:after {
+        border-right-color: $winColor;
+      }
+    }
+  }
+  .highlightLoser {
+    .bubble {
+      background-color: $loseColor;
+      color: #333333;
+      &:after {
+        border-right-color: $loseColor;
+      }
+    }
+  }
+}
+
+div.jQBracket.rl {
+  .finals {
+    float: left;
+    left: 0px;
+    clear: left;
+  }
+  .bracket {
+    float: left;
+    clear: right;
+  }
+  .loserBracket {
+    float: left;
+    clear: right;
+  }
+  .round {
+    margin-right: 0;
+    margin-left: 40px;
+    float: right;
+  }
+  .team {
+    float: right;
+    div.label {
+      right: 0;
+    }
+    div.score {
+      float: left;
+    }
+  }
+  .teamContainer {
+    float: right;
+  }
+  .connector {
+    border-left-style: solid;
+    border-right-style: none;
+    border-width: 2px;
+    &.highlightWinner,
+    div.connector.highlightWinner {
+      border-color: $winColor;
+    }
+    &.highlightLoser,
+    div.connector.highlightLoser {
+      border-color: $loseColor;
+    }
+    &.highlight,
+    div.connector.highlight {
+      border-color: #00cc00;
+    }
+  }
+  .bubble {
+    left: -35px;
+    &.third {
+      background-color: $thirdColor;
+      color: #331100;
+    }
+    &.fourth {
+      background-color: $fourthColor;
+      color: #ccccdd;
+    }
+    &:after {
+      left: auto;
+      right: -5px;
+      border-left: 5px solid transparent;
+      border-right: 0;
+    }
+    &.third:after {
+      border-right: none;
+      border-left: 6px solid $thirdColor;
+    }
+    &.fourth:after {
+      border-right: none;
+      border-left: 6px solid $fourthColor;
+    }
+  }
+  .highlightWinner {
+    .bubble {
+      &:after {
+        border-left-color: $winColor;
+      }
+    }
+  }
+  .highlightLoser {
+    .bubble {
+      &:after {
+        border-left-color: $loseColor;
+      }
+    }
+  }
+}

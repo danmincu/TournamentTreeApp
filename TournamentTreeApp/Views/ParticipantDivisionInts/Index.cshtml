@@ -1,0 +1,45 @@
+﻿@model IEnumerable<TournamentModels.ParticipantDivisionInt>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.OrderId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Division.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Participant.Name)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.OrderId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Division.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Participant.Name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ParticipantDivisionIntId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ParticipantDivisionIntId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ParticipantDivisionIntId })
+        </td>
+    </tr>
+}
+
+</table>

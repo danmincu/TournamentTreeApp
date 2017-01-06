@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFile": "Content/jquery.bracket.john.css",
+    "inputFile": "Content/jquery.bracket.john.scss"
+  },
+  {
+    "outputFile": "Content/jquery.bracket.john.sd.css",
+    "inputFile": "Content/jquery.bracket.john.sd.scss"
+  }
+]

@@ -1,0 +1,46 @@
+﻿<div>
+    <script>
+        $(function () {
+            var iisApplication = "";
+            //console.log(window.location.pathname);
+            //if (window.location.pathname.split('/').length > 2)
+            if (window.location.pathname.split('/')[1] != 'Import')
+                iisApplication = '/' + window.location.pathname.split('/')[1];
+            var container = $('#ajaxUploadForm');
+            container.attr('action', iisApplication + '/api/upload/tournamentcsvfiles');})
+    </script>
+
+    <form enctype="multipart/form-data" method="post" action=""
+          id="ajaxUploadForm" novalidate="novalidate">
+
+        <fieldset>
+            <legend>Create a new tournament from csv files:</legend>
+            <ol>                
+                <li>
+                    <label>Tournament name</label>
+                    <input type="text" style="width:317px" name="tournament" id="tournament">
+                </li>
+                <hr />
+                <li>
+                    <label>File encoding type</label>
+                    <br />
+                    <input type="radio" value="ANSI" name="encoding">
+                    ANSI
+                    <br />
+                    <input type="radio" value="UTF-8" name="encoding">
+                    UTF-8
+                    <br />
+                </li>
+                <hr />
+                <li>
+                    <label>Import files</label>
+                    <input type="file" id="fileInput" name="fileInput" multiple>
+                </li>
+                <hr />
+                <li>
+                    <input type="submit" value="Upload" id="ajaxUploadButton" class="btn">
+                </li>
+            </ol>
+        </fieldset>
+    </form>
+</div>

@@ -1,0 +1,122 @@
+﻿@model TournamentModels.Tournament
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<hr style="height:5pt; visibility:hidden;"/>
+<div>    
+    <table class="table">
+        <tr>
+            <th>Tournament @Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.Date)</th>
+            <th>@Html.DisplayNameFor(model => model.Location)</th>
+            <th>@Html.DisplayNameFor(model => model.Options)</th>
+        </tr>
+        <tr>
+            <th>@Html.DisplayFor(model => model.Name)</th>
+            <th>@Html.DisplayFor(model => model.Date)</th>
+            <th>@Html.DisplayFor(model => model.Location)</th>
+            <th>@Html.DisplayFor(model => model.Options)</th>
+        </tr>
+    </table>
+</div>
+<hr style="height:5pt; visibility:hidden;" />
+<div>
+    <p>
+        @if (Request.IsAuthenticated && User.IsInRole("Administrator") || User.IsInRole(Model.TournamentId.ToString().ToLower()))
+        {
+        <p>
+            @Html.ActionLink(">> Create division", "CreateForTournament", "Divisions", new { tournamentID = Model.TournamentId }, null)
+        </p>
+        }
+        </p>
+    </div>
+
+    <div>
+        <table class="table">
+            <tr>
+                <th>Division</th>
+                <th>Participants</th>
+                <th>Bracket</th>
+                <th>Consolidation round</th>
+                <th></th>
+                <th></th>
+            </tr>
+            @foreach (var division in @Model.Divisions.OrderBy(d => d.OrderId))
+            {
+                <tr>
+                    <td>
+                        <b>
+                            @if (division.ParticipantDivisionInts.Count > 1 && division.DrawBracket)
+                            {
+                                <a href="~/Bracket/Index?divisionID=@division.DivisionId">@Html.DisplayName(division.Name)</a>
+                            }
+                            else
+                            {
+                                <a href="~/Bracket/FlatList?divisionID=@division.DivisionId">@Html.DisplayName(division.Name)</a>
+                            }
+                        </b>
+                    </td>
+                    <td>
+                        @Html.DisplayName(division.ParticipantDivisionInts.Count.ToString())
+                    </td>
+                    <td>
+                        @Html.CheckBox("drawBracket", division.DrawBracket, new { @disabled = "disabled" })
+                    </td>
+                    <td>
+                        @Html.CheckBox("consolidationRound", division.ConsolidationRound, new { @disabled = "disabled" })
+                    </td>
+                    @if (Request.IsAuthenticated && (User.IsInRole("Administrator") || User.IsInRole(division.Tournament.TournamentId.ToString().ToLower())))
+                    {
+                        <td>
+                            <a href="~/Divisions/Edit/@division.DivisionId">Edit |</a>
+                            <a href="~/Divisions/Details/@division.DivisionId">Details |</a>
+                            <a href="~/Divisions/Delete/@division.DivisionId">Delete</a>
+                        </td>
+
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+
+    @if (Request.IsAuthenticated && (User.IsInRole("Administrator") || User.IsInRole(Model.TournamentId.ToString().ToLower())))
+    {
+        <div>
+            <hr style="height:30pt; visibility:hidden;" />
+
+            <p>
+                @Html.ActionLink(">> Create School", "CreateForTournament", "Schools", new { tournamentID = Model.TournamentId }, null)
+            </p>
+            <table class="table">
+                <tr>
+                    <th>
+                        School @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th></th>
+                </tr>
+
+                @foreach (var item in Model.Schools.OrderBy(s => s.Name))
+                {
+                    <tr>
+                        <td>
+                            <b>
+                                @Html.ActionLink(item.Name, "Details", "Schools", new { id = item.SchoolId }, null)
+                            </b>
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", "Schools", new { id = item.SchoolId }, null) |
+                            @Html.ActionLink("Delete", "Delete", "Schools", new { id = item.SchoolId }, null)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+    }
+
+    <hr />
+    <li>
+        @Html.ActionLink("Back to List", "Index")
+    </li>

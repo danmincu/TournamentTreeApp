@@ -1,0 +1,81 @@
+﻿@model TournamentModels.School
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>School details</h2>
+
+<div>
+    @*<h4>School</h4>*@
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tournament)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Tournament.Name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SchoolId }) |
+    @Html.ActionLink("Back to tournament", "Details", "Tournaments", new { id = Model.TournamentId }, null)
+</p>
+
+<h2>School students</h2>
+<div>
+
+    <p>
+        @Html.ActionLink("Create New", "CreateForSchool", "Participants", new { schoolId = Model.SchoolId, tournamentId = Model.TournamentId }, null)
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            
+            @*<th>
+                @Html.DisplayNameFor(model => model.Tournament)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tournament.Name)
+            </th>*@
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Participants.OrderBy(p => p.Name))
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>             
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.School.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tournament.Name)
+                </td>*@
+                <td>
+                    @Html.ActionLink("Edit", "Edit", "Participants", new { id = item.ParticipantId }, null) |
+                  @*  @Html.ActionLink("Details", "Details", "Participants", new { id = item.ParticipantId }, null) |*@
+                    @Html.ActionLink("Delete", "Delete", "Participants", new { id = item.ParticipantId }, null)
+                </td>
+            </tr>
+        }
+
+    </table>
+
+
+</div>

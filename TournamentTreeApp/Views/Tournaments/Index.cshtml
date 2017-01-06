@@ -1,0 +1,85 @@
+﻿@model IEnumerable<TournamentModels.Tournament>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Tournaments</h2>
+
+<p>
+    @if (Request.IsAuthenticated && User.IsInRole("Administrator"))
+    {
+        @Html.ActionLink(" >> Create Tournament", "Create")
+    }
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Location)
+        </th>
+        @if (Request.IsAuthenticated)
+        {
+            <th>
+                @Html.DisplayNameFor(model => model.Options)
+            </th>
+        }
+        <th></th>
+    </tr>
+
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <b>
+                    @Html.ActionLink(item.Name, "Details", new { id = item.TournamentId })                              
+                </b>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+            @if (Request.IsAuthenticated)
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.Options)
+                </td>
+            }
+            <td>
+
+                @if (Request.IsAuthenticated && (User.IsInRole("Administrator")))
+                {
+                    <li>@Html.ActionLink("Edit", "Edit", new { id = item.TournamentId })</li>                    
+                    <li>@Html.ActionLink("Delete", "Delete", new { id = item.TournamentId })</li>
+                    <li>@Html.ActionLink("Text report", "TxtReport", new { id = item.TournamentId })</li>
+                    <li>@Html.ActionLink("Print", "PdfPrintDocOrdered", new { id = item.TournamentId }, new { target = "_blank" })</li>
+                }
+                else
+                {
+                    if (User.IsInRole(item.TournamentId.ToString().ToLower()))
+                    {
+                        <li>@Html.ActionLink("View and modify divisions", "Details", new { id = item.TournamentId })</li>
+                        <li>@Html.ActionLink("Text report", "TxtReport", new { id = item.TournamentId })</li>
+
+                    }
+                    if (Request.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Print", "PdfPrintDocOrdered", new { id = item.TournamentId }, new { target = "_blank" })</li>
+                    }
+                }
+
+
+            </td>
+        </tr>
+    }
+
+</table>
+<hr />

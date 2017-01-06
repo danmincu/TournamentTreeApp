@@ -1,0 +1,42 @@
+﻿@model TournamentModels.ParticipantDivisionInt
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ParticipantDivisionInt</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.OrderId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrderId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Division.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Division.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Participant.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Participant.Name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ParticipantDivisionIntId }) |
+    @*@Html.ActionLink("Back to List", "Index")*@
+</p>
