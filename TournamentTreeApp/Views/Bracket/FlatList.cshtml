@@ -11,11 +11,11 @@
 {
     if (@Model.PreviousAsBracket)
     {
-        <a href="~/Bracket/Index?divisionID=@Model.PreviousDivision.DivisionId.ToString()">Previous Division</a>
+        <a href="~/Bracket/Index?divisionID=@Model.PreviousDivision.DivisionId.ToString()" altdata="@Model.PreviousDivision.Name">Previous Division</a>
     }
     else
     {
-        <a href="~/Bracket/FlatList?divisionID=@Model.PreviousDivision.DivisionId.ToString()">Previous Division</a>
+        <a href="~/Bracket/FlatList?divisionID=@Model.PreviousDivision.DivisionId.ToString()" altdata="@Model.PreviousDivision.Name">Previous Division</a>
     }
 }
 else
@@ -27,11 +27,11 @@ else
 {
     if (@Model.NextAsBracket)
     {
-        <a href="~/Bracket/Index?divisionID=@Model.NextDivision.DivisionId.ToString()">Next Division</a>
+        <a href="~/Bracket/Index?divisionID=@Model.NextDivision.DivisionId.ToString()" altdata="@Model.NextDivision.Name">Next Division</a>
     }
     else
     {
-        <a href="~/Bracket/FlatList?divisionID=@Model.NextDivision.DivisionId.ToString()">Next Division</a>
+        <a href="~/Bracket/FlatList?divisionID=@Model.NextDivision.DivisionId.ToString()" altdata="@Model.NextDivision.Name">Next Division</a>
     }
 }
 else
