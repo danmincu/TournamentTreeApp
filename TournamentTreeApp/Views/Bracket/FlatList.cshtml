@@ -6,7 +6,38 @@
 
 <link rel="stylesheet" href="~/Content/jquery.bracket.john.css" />
 
-<h1>Tournament: @Model.TournamentName</h1>
+<h1>Tournament: <a href="~//Tournaments/Details/@Model.TournamentId.ToString()">@Model.TournamentName</a></h1>
+@if (@Model.PreviousDivision != null)
+{
+    if (@Model.PreviousAsBracket)
+    {
+        <a href="~/Bracket/Index?divisionID=@Model.PreviousDivision.DivisionId.ToString()">Previous Division</a>
+    }
+    else
+    {
+        <a href="~/Bracket/FlatList?divisionID=@Model.PreviousDivision.DivisionId.ToString()">Previous Division</a>
+    }
+}
+else
+{
+    <a style="cursor:default;color:gray; pointer-events: none;">Previous Division</a>
+}
+|
+@if (@Model.NextDivision != null)
+{
+    if (@Model.NextAsBracket)
+    {
+        <a href="~/Bracket/Index?divisionID=@Model.NextDivision.DivisionId.ToString()">Next Division</a>
+    }
+    else
+    {
+        <a href="~/Bracket/FlatList?divisionID=@Model.NextDivision.DivisionId.ToString()">Next Division</a>
+    }
+}
+else
+{
+    <a style="cursor:default;color:gray; pointer-events: none;">Next Division</a>
+}
 <h2>Division: @Model.Name</h2>
 <h3 style="color:red">@Model.Title</h3>
 
