@@ -24,6 +24,106 @@ namespace TournamentsTreeApp.Controllers
             return View(db.Tournaments.ToList());
         }
 
+
+        // GET: Tournaments/Details/5
+        public ActionResult Copy(Guid tournamentId)
+        {
+            var tournament = db.Tournaments
+                .Include(t => t.Schools)
+                .Include(t => t.Participants)
+                .Include(t => t.Divisions)
+                .AsNoTracking()
+                .FirstOrDefault(e => e.TournamentId == tournamentId);
+
+            if (tournament == null)
+            {
+                return HttpNotFound();
+            }
+
+            var copiedTournament = new Tournament();
+
+            copiedTournament.Name = String.Format("Copy of ({0})", tournament.Name.Replace("{", "(").Replace("}", ")"));
+
+            copiedTournament.TournamentId = Guid.NewGuid();
+
+
+            Dictionary<Guid, Participant> exchangeKeysDrawer = new Dictionary<Guid, Participant>();
+
+
+            foreach (var sch in tournament.Schools)
+            {
+                var school = new School()
+                {
+                    Name = sch.Name,
+                    SchoolId = Guid.NewGuid(),
+                    TournamentId = copiedTournament.TournamentId,
+                    Tournament = copiedTournament
+                };
+
+                copiedTournament.Schools.Add(school);
+
+                foreach (var part in sch.Participants)
+                {
+                    var participant = new Participant()
+                    {
+                        ParticipantId = Guid.NewGuid(),
+                        Name = part.Name,
+                        SchoolId = school.SchoolId,
+                        School = school,
+                        TournamentId = copiedTournament.TournamentId,
+                        Tournament = copiedTournament
+                    };
+                    exchangeKeysDrawer.Add(part.ParticipantId, participant);
+                    school.Participants.Add(participant);
+                }
+            }
+
+
+            foreach (var div in tournament.Divisions)
+            {
+                var division = new Division()
+                {
+                    DivisionId = Guid.NewGuid(),
+                    Id = div.Id,
+                    Name = div.Name,
+                    Bracket = div.Bracket,
+                    DoubleElimination = div.DoubleElimination,
+                    NoComebackFromLooserBracket = div.NoComebackFromLooserBracket,
+                    NoSecondaryFinal = div.NoSecondaryFinal,
+                    DrawBracket = div.DrawBracket,
+                    ConsolidationRound = div.ConsolidationRound,
+                    OrderId = div.OrderId,
+                    Title = div.Title,
+                    RoundRobin = div.RoundRobin,
+                    TournamentId = copiedTournament.TournamentId,
+                    Tournament = copiedTournament
+                };
+
+                copiedTournament.Divisions.Add(division);
+                foreach (var pd in div.ParticipantDivisionInts)
+                {
+                    var participantDiv = new ParticipantDivisionInt()
+                    {
+                        ParticipantDivisionIntId = Guid.NewGuid(),
+                        Division = division,
+                        DivisionId = division.DivisionId,
+                        Participant = exchangeKeysDrawer[pd.ParticipantId],
+                        ParticipantId = exchangeKeysDrawer[pd.ParticipantId].ParticipantId,
+                        OrderId = div.OrderId
+                    };
+
+                    division.ParticipantDivisionInts.Add(participantDiv);
+                }
+            }
+
+            db.Tournaments.Add(copiedTournament);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+
+
         // GET: Tournaments/Details/5
         public ActionResult Details(Guid? id)
         {

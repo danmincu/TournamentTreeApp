@@ -69,7 +69,7 @@ namespace TournamentsTreeApp.Controllers
                         init.results[0][0] = Enumerable.Range(0, teams.Length).Select(i => teams[i][1].Contains("==>") ? new int?[2] { 1, 0 } : new int?[2]).ToArray();
                     }
 
-                    var bracket = new Bracket() { dir = "lr", skipConsolationRound = !(division.ConsolidationRound), skipGrandFinalComeback = false, skipSecondaryFinal = false, init = init };
+                    var bracket = new Bracket() { dir = "lr", skipConsolationRound = !(division.ConsolidationRound) || division.ParticipantDivisionInts.Count <= 3, skipGrandFinalComeback = false, skipSecondaryFinal = false, init = init };
                     var ro = new Rootobject() { id = division.Tournament.TournamentId.ToString(), data = new Data() { name = division.Tournament.Name, bracket = bracket } };
                     return ro;
                 }
