@@ -147,7 +147,7 @@
 
                     var iisApplication = "";
 
-                    if (window.location.pathname.split('/').length > 3)
+                    if (window.location.pathname.split('/').length > 4)
                         iisApplication = '/' + window.location.pathname.split('/')[1];
 
                     window.location.href = iisApplication + this.value;
