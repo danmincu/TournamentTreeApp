@@ -89,7 +89,31 @@ namespace TournamentsTreeApp.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize]
+        public ActionResult PlayerTransfer(Guid playerId, Guid divisionId, Guid currentDivisionId)
+        {
+            var currentDivision = db.Divisions.Find(currentDivisionId);
+            var currentParticipantDivisionInts = currentDivision.ParticipantDivisionInts.FirstOrDefault(pdi => pdi.ParticipantId == playerId);
+            if (currentParticipantDivisionInts != null)
+            {
+                var transferDivision = db.Divisions.Find(divisionId);
+                if (transferDivision != null)
+                {
+                    if (!transferDivision.ParticipantDivisionInts.Any(item => item.ParticipantId == playerId))
+                    {
 
+                        var maxOrderID = transferDivision.ParticipantDivisionInts.Any() ? transferDivision.ParticipantDivisionInts.Max(pdi => pdi.OrderId) : 0;
+                        transferDivision.ParticipantDivisionInts.Add(new ParticipantDivisionInt() { ParticipantDivisionIntId= Guid.NewGuid(), ParticipantId = playerId, DivisionId = divisionId, OrderId = maxOrderID + 1});
+                        db.SaveChanges();
+
+                    }
+                }
+                db.ParticipantDivisionInts.Remove(currentParticipantDivisionInts);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Details", "Divisions", new { id = currentDivisionId });
+        }
         // GET: Divisions/Details/5
         public ActionResult Details(Guid? id)
         {
@@ -102,6 +126,25 @@ namespace TournamentsTreeApp.Controllers
             {
                 return HttpNotFound();
             }
+
+            Dictionary<Guid, List<SelectListItem>> transferLinks = new Dictionary<Guid, List<SelectListItem>>();
+            foreach (var participant in division.OrderedParticipants)
+            {
+                List<SelectListItem> items = new List<SelectListItem>();
+                items.Add(new SelectListItem { Text = "Select division for transfer...", Value = "" });
+                foreach (var div in division.Tournament.Divisions.Where(div => div.DivisionId != division.DivisionId))
+                {
+                    items.Add(new SelectListItem
+                    {
+                        Text = div.Name,
+                        Value = "/Divisions/PlayerTransfer?playerId=" + participant.ParticipantId.ToString() + "&divisionId=" + div.DivisionId.ToString() + "&currentDivisionId=" + id.ToString()
+                    });
+                }
+
+                transferLinks.Add(participant.ParticipantId, items);
+            }
+
+            division.LinkHelper = transferLinks;
             return View(division);
         }
 
@@ -121,7 +164,7 @@ namespace TournamentsTreeApp.Controllers
             //var m = (bool?)s;
 
             ViewBag.DefaultConsolidationRound = (bool?)db.Tournaments.Where(t => t.TournamentId == tournamentId).Select(t => t.ConsolidationRound).ToList().FirstOrDefault();
-            ViewBag.RetournLinkId = tournamentId;            
+            ViewBag.RetournLinkId = tournamentId;
             return View("Create");
         }
 
@@ -273,7 +316,7 @@ namespace TournamentsTreeApp.Controllers
         [ValidateAntiForgeryToken]
         [Authorize]
         public ActionResult DeleteConfirmed(Guid id)
-        {            
+        {
             Division division = db.Divisions.Find(id);
             if (!(User.IsInRole("Administrator") || User.IsInRole(division.TournamentId.ToString().ToLower())))
             {

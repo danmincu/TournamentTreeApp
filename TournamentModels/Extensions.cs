@@ -118,7 +118,9 @@ using System.Data.Entity;
                     return result;
                 }
             }
-        }
+
+           public object LinkHelper { set; get; }
+    }
 
         public partial class Tournament
         {
