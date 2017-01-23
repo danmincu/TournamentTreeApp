@@ -143,8 +143,14 @@
     <script>
         $(".target").change(function () {
             if (this.value != null && this.value != "")
-                if (confirm("Are you sure?")) {
-                    window.location.href = this.value;
+                if (confirm("Are you sure you want to transfer the participant?")) {
+
+                    var iisApplication = "";
+
+                    if (window.location.pathname.split('/').length > 3)
+                        iisApplication = '/' + window.location.pathname.split('/')[1];
+
+                    window.location.href = iisApplication + this.value;
                 }
                 else {
                     this.selectedIndex = 0;
