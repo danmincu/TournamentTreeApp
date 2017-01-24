@@ -9,7 +9,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Tournament</h4>
         <hr />
@@ -63,9 +63,32 @@
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="copy" value="Create a copy of the tournament!" class="btn btn-default" style="width:280px;" data_tag=@Model.TournamentId />
+            </div>
+        </div>
+
     </div>
 }
+
+
 
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
+
+<script>
+    window.onload = function () {
+        document.getElementById("copy").onclick = function fun() {
+            if ("@Model.TournamentId.ToString()" != "")
+                if (confirm("Are you sure you want to copy the tournament?")) {
+
+                    var iisApplication = "";
+                    if (window.location.pathname.split('/').length > 4)
+                        iisApplication = '/' + window.location.pathname.split('/')[1];
+                    window.location.href = iisApplication + "/Tournaments/Copy?tournamentId=@Model.TournamentId.ToString()";
+                }
+        }
+    }
+</script>

@@ -1,7 +1,7 @@
 ﻿@model TournamentModels.Division
 
 @{
-    ViewBag.Title = "Details";    
+    ViewBag.Title = "Details";
 }
 <hr />
 <div>
@@ -44,7 +44,9 @@
         <dd>
             @Html.DisplayFor(model => model.DrawBracket)
         </dd>
-
+        <dt>
+            @Html.DisplayNameFor(model => model.ConsolidationRound)
+        </dt>
         <dd>
             @Html.DisplayFor(model => model.ConsolidationRound)
         </dd>
@@ -66,7 +68,7 @@
             </dd>*@
 
         <dt>
-            @Html.DisplayNameFor(model => model.Tournament.Name)
+            @Html.DisplayNameFor(model => model.Tournament)
         </dt>
 
         <dd>
@@ -108,7 +110,7 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th></th>
-            <th>Transfer to division...</th>            
+            <th>Transfer to division...</th>
         </tr>
 
         @foreach (var item in Model.ParticipantDivisionInts)
@@ -155,7 +157,7 @@
                 else {
                     this.selectedIndex = 0;
                 }
-    });
+        });
     </script>
 
 </div>
