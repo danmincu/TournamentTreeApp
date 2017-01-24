@@ -202,6 +202,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\FastParticipant.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\TournamentTreeAppModels.cs" />
@@ -327,6 +328,7 @@
     <Content Include="Views\Schools\Details.cshtml" />
     <Content Include="Views\Schools\Edit.cshtml" />
     <Content Include="Views\Import\Index.cshtml" />
+    <Content Include="Views\ParticipantDivisionInts\CreateForDivisionFast.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

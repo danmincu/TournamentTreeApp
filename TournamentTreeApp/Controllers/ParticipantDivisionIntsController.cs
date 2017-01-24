@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using TournamentModels;
+using TournamentsTreeApp.Models;
 
 namespace TournamentsTreeApp.Controllers
 {
@@ -34,6 +35,89 @@ namespace TournamentsTreeApp.Controllers
                 return HttpNotFound();
             }
             return View(participantDivisionInt);
+        }
+
+
+        // GET
+        [Authorize]
+        public ActionResult CreateForDivisionFast(Guid divisionId, Guid tournamentId)
+        {
+            if (!(User.IsInRole("Administrator") || User.IsInRole(tournamentId.ToString().ToLower())))
+            {
+                return Content("Access denied: this user doesn't have permission to alter the selected tournament!");
+            }
+            
+            var schools = db.Schools.Where(s => s.TournamentId == tournamentId).ToList();
+            schools.Insert(0, new School() { SchoolId = Guid.Empty, Name = "Select a school or type new name..." });
+            ViewBag.SchoolId = new SelectList(schools, "SchoolId", "Name");
+            ViewBag.RetournLinkId = divisionId;
+            return View();
+        }
+
+        // POST
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult CreateForDivisionFast([Bind(Include = "SchoolId,SchoolName,ParticipantName,DivisionId,TournamentId")] FastParticipant fastParticipant)
+        {
+            if (string.IsNullOrEmpty(fastParticipant.ParticipantName) || (fastParticipant.SchoolId == Guid.Empty && string.IsNullOrEmpty(fastParticipant.SchoolName)))
+                return RedirectToAction("Details", "Divisions", new { id = fastParticipant.DivisionId });
+
+            var tournament = db.Tournaments.Include(t => t.Schools).Include(t => t.Participants).Where(t => t.TournamentId == fastParticipant.TournamentId).FirstOrDefault();
+            School school = null;
+            if (fastParticipant.SchoolId == Guid.Empty)
+            {
+                school = tournament.Schools.FirstOrDefault(s => s.Name.Equals(fastParticipant.SchoolName, StringComparison.OrdinalIgnoreCase));
+                if (school == null)
+                {
+                    school = new School
+                    {
+                        Name = fastParticipant.SchoolName,
+                        SchoolId = Guid.NewGuid(),
+                        Tournament = tournament,
+                        TournamentId = fastParticipant.TournamentId
+                    };
+                    tournament.Schools.Add(school);
+                };
+            }
+            else
+            {
+                school = db.Schools.FirstOrDefault(s => s.SchoolId == fastParticipant.SchoolId);
+            }
+
+            var participant = new Participant
+            {
+                Name = fastParticipant.ParticipantName,
+                School = school,
+                SchoolId = school.SchoolId,
+                Tournament = tournament,
+                TournamentId = fastParticipant.TournamentId,
+                Dummy = false,
+                ParticipantId = Guid.NewGuid()
+            };
+
+
+            school.Participants.Add(participant);
+            tournament.Participants.Add(participant);
+            db.SaveChanges();
+
+            var transferDivision = db.Divisions.Find(fastParticipant.DivisionId);
+            if (transferDivision != null)
+            {
+                var maxOrderID = transferDivision.ParticipantDivisionInts.Any() ? transferDivision.ParticipantDivisionInts.Max(pdi => pdi.OrderId) : 0;
+                transferDivision.ParticipantDivisionInts.Add(new ParticipantDivisionInt()
+                {
+                    ParticipantDivisionIntId = Guid.NewGuid(),
+                    ParticipantId = participant.ParticipantId,
+                    DivisionId = fastParticipant.DivisionId,
+                    OrderId = maxOrderID + 1
+                });
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Details", "Divisions", new { id = fastParticipant.DivisionId });
         }
 
 
@@ -74,6 +158,7 @@ namespace TournamentsTreeApp.Controllers
         [Authorize]
         public ActionResult CreateForDivision([Bind(Include = "ParticipantDivisionIntId,ParticipantId,DivisionId,OrderId")] ParticipantDivisionInt participantDivisionInt)
         {
+
             if (participantDivisionInt.ParticipantId == Guid.Empty)
                 return RedirectToAction("Details", "Divisions", new { id = participantDivisionInt.DivisionId });
             if (ModelState.IsValid)
