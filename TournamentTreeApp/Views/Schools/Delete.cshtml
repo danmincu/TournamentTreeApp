@@ -29,12 +29,42 @@
 
     </dl>
 
-    @using (Html.BeginForm()) {
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> 
-           @* | @Html.ActionLink("Back to List", "Index")*@
+            <input type="submit" value="Delete" class="btn btn-default" />
+            @* | @Html.ActionLink("Back to List", "Index")*@
         </div>
+    }
+
+    <h4>Competitors in the current school and their participation in divisions</h4>
+    @if (Model.Participants.Any())
+    {
+        <ul>
+            @foreach (var participant in Model.Participants)
+            {
+                <li>
+                    @participant.Name
+                    @if (participant.ParticipantDivisionInts.Any())
+                    {
+                        <ul>
+                            @foreach (var pdi in participant.ParticipantDivisionInts)
+                        {
+                                <li>@pdi.Division.Name</li>
+                            }
+                        </ul>
+                    }
+                </li>
+            }
+
+        </ul>
+    }
+    else
+    {
+        <ul>
+            <li>This school has no competitors.</li>
+        </ul>
     }
 </div>
