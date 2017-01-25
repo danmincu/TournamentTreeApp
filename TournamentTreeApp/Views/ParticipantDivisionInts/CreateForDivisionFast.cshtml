@@ -1,7 +1,7 @@
 ﻿@model TournamentsTreeApp.Models.FastParticipant
 
 @{
-    ViewBag.Title = "Add a new participant";
+    ViewBag.Title = "Add a new competitor";
 }
 
 <h2>Create a New Participant</h2>
@@ -12,7 +12,7 @@
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>Creates a new participant and school combo and adds it to the current division</h4>
+        <h4>Creates a new competitor and school combo and adds it to the current division</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -30,7 +30,7 @@
         </div>
         
         <div class="form-group">
-            @Html.LabelFor(model => model.ParticipantName, "New Participant Name", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.ParticipantName, "New Competitor Name", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.TextBox("ParticipantName", null, htmlAttributes: new { @class = "form-control" })                
             </div>
@@ -38,7 +38,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Add participant" class="btn btn-default" />
+                <input type="submit" value="Add competitor" class="btn btn-default" />
             </div>
         </div>
     </div>

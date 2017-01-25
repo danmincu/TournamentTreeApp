@@ -132,7 +132,7 @@ namespace TournamentsTreeApp.Controllers
             {
                 List<SelectListItem> items = new List<SelectListItem>();
                 items.Add(new SelectListItem { Text = "Select division for transfer...", Value = "" });
-                foreach (var div in division.Tournament.Divisions.Where(div => div.DivisionId != division.DivisionId))
+                foreach (var div in division.Tournament.Divisions.Where(div => div.DivisionId != division.DivisionId).OrderBy(div => div.Name))
                 {
                     items.Add(new SelectListItem
                     {
