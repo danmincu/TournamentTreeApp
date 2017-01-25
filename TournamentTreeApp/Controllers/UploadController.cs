@@ -89,6 +89,9 @@ namespace TournamentsTreeApp.Controllers
             if (tournamentNameContent == null)
                 return Content(HttpStatusCode.ExpectationFailed, "Null tournament name");
 
+            var tournamentDefaultConsolidationRoundContent = streamProvider.Contents.Where(c => c.Headers.ContentDisposition.Name.Equals("\"defConsolidation\"")).FirstOrDefault();
+            var defConsolidation = tournamentDefaultConsolidationRoundContent == null ? "off" : tournamentDefaultConsolidationRoundContent.ReadAsStringAsync().Result;
+            var boolDefConsolidation = defConsolidation != null && defConsolidation.Equals("on", StringComparison.OrdinalIgnoreCase);
             var tournamentName = tournamentNameContent.ReadAsStringAsync().Result;
             if (string.IsNullOrEmpty(tournamentName))
                 return Content(HttpStatusCode.ExpectationFailed, "Empty tournament name");
@@ -119,6 +122,11 @@ namespace TournamentsTreeApp.Controllers
                 var datacsv = dict.Keys.Where(k => Regex.IsMatch(k,@"(Data.*)\.csv", RegexOptions.Multiline)).FirstOrDefault();
                 var divisionscsv = dict.Keys.Where(k => Regex.IsMatch(k, @"(Divisions.*)\.csv", RegexOptions.Multiline)).FirstOrDefault();
                 var tournament = TournamentModels.Tournament.LoadFromImportedCsv(tournamentName, dict[divisionscsv], dict[datacsv]);
+                foreach (var division in tournament.Divisions)
+                {
+                    division.ConsolidationRound = boolDefConsolidation;
+                }
+                tournament.ConsolidationRound = boolDefConsolidation;
 
                 try
                 {
