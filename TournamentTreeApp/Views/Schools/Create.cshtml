@@ -3,6 +3,11 @@
 @{
     ViewBag.Title = "Create";
 }
+<style>
+    .hidden {
+        visibility: hidden;
+    }
+</style>
 
 <h2>Create</h2>
 
@@ -22,7 +27,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group hidden">
             @Html.LabelFor(model => model.TournamentId, "TournamentId", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("TournamentId", null, htmlAttributes: new { @class = "form-control" })
