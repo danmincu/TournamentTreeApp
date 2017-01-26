@@ -184,8 +184,8 @@ namespace TournamentsTreeApp.Controllers
                 }
                 division.DivisionId = Guid.NewGuid();
                 var maxId = db.Divisions.Where(d => d.TournamentId == division.TournamentId).Select(d => d.OrderId).Max();
-                //var maxId = db.Divisions.Where(d => d.TournamentId == division.TournamentId).Max(d => TryParse(d.Id));
-                division.Id = division.DivisionId.ToString();
+                var listOfIds = db.Divisions.Where(d => d.TournamentId == division.TournamentId).Select(d => d.Id).ToList();
+                division.Id = (listOfIds.Select(idl => AlwaysParse(idl)).Max() + 1).ToString();
                 division.OrderId = (maxId ?? 0) + 1;
                 db.Divisions.Add(division);
                 db.SaveChanges();
@@ -194,6 +194,13 @@ namespace TournamentsTreeApp.Controllers
 
             ViewBag.TournamentId = new SelectList(db.Tournaments, "TournamentId", "Name", division.TournamentId);
             return View(division);
+        }
+
+        private static int AlwaysParse(string input)
+        {
+            int result;
+            if (int.TryParse(input, out result)) return result;
+            return 0;
         }
 
         private int TryParse(string id)
