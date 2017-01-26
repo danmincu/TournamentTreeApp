@@ -343,6 +343,7 @@ namespace TournamentsTreeApp.Controllers
             public double marginAll;
             public double pagePixHeight;
             public double zoomFactor;
+            public bool consolidationRound = false;
         }
 
 
@@ -353,6 +354,7 @@ namespace TournamentsTreeApp.Controllers
             var templates = new PrintTemplate[]
                 {
                     new PrintTemplate() {min = 1, max = 8, hasBracket = true, orientation = "Landscape", pageSize = "Letter", pagePixHeight = 720, marginAll = 1, zoomFactor = 1.5 },
+                    new PrintTemplate() {min = 1, max = 8, hasBracket = true, consolidationRound = true, orientation = "Landscape", pageSize = "Letter", pagePixHeight = 840, marginAll = 1, zoomFactor = 0.70 },
                     new PrintTemplate() {min = 9, max = 16, hasBracket = true, orientation = "Portrait", pageSize = "Letter", pagePixHeight = 1340, marginAll = 0.5, zoomFactor = .95 },
                     new PrintTemplate() {min = 17, max = 32, hasBracket = true, orientation = "Portrait", pageSize = "Letter", pagePixHeight = 1500, marginAll = 2, zoomFactor = .7 },
                     new PrintTemplate() {min = 33, max = 64, hasBracket = true, orientation = "Portrait", pageSize = "A2", pagePixHeight = 3000, marginAll = 1.5, zoomFactor = .82 },
@@ -396,14 +398,14 @@ namespace TournamentsTreeApp.Controllers
                     {
 
 
-                        if (template.hasBracket == division.DrawBracket && template.min <= division.ParticipantDivisionInts.Count && template.max >= division.ParticipantDivisionInts.Count)
+                        if (template.hasBracket == division.DrawBracket && template.consolidationRound == division.ConsolidationRound && template.min <= division.ParticipantDivisionInts.Count && template.max >= division.ParticipantDivisionInts.Count)
                         {
                             printCommand.Documents.Add(new Subdocument()
                             {
                                 Address = division.ParticipantDivisionInts.Count <= 16 ? Url.AbsoluteAction("PrintSingleDocumentSmallDivision", "Tournaments",
                                 new { id = id, divisionId = division.DivisionId, pixHeight = template.pagePixHeight }) : Url.AbsoluteAction("PrintSingleDocument", "Tournaments",
                                 new { id = id, divisionId = division.DivisionId, pixHeight = template.pagePixHeight }),
-                                Orientation = template.orientation,
+                                Orientation = /*(division.ParticipantDivisionInts.Count == 4 && division.ConsolidationRound) ? "Portrait" : */template.orientation,
                                 MarginAll = template.marginAll,
                                 PageSize = template.pageSize,
                                 ZoomFactor = template.zoomFactor
