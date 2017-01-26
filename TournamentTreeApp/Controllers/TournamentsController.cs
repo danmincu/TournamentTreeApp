@@ -344,6 +344,7 @@ namespace TournamentsTreeApp.Controllers
             public double pagePixHeight;
             public double zoomFactor;
             public bool consolidationRound = false;
+            public bool ignoreConsolidationRoundSetting = true;
         }
 
 
@@ -353,13 +354,13 @@ namespace TournamentsTreeApp.Controllers
             int divisionNumber = 0;
             var templates = new PrintTemplate[]
                 {
-                    new PrintTemplate() {min = 1, max = 8, hasBracket = true, orientation = "Landscape", pageSize = "Letter", pagePixHeight = 720, marginAll = 1, zoomFactor = 1.5 },
-                    new PrintTemplate() {min = 1, max = 8, hasBracket = true, consolidationRound = true, orientation = "Landscape", pageSize = "Letter", pagePixHeight = 840, marginAll = 1, zoomFactor = 0.70 },
-                    new PrintTemplate() {min = 9, max = 16, hasBracket = true, orientation = "Portrait", pageSize = "Letter", pagePixHeight = 1340, marginAll = 0.5, zoomFactor = .95 },
-                    new PrintTemplate() {min = 17, max = 32, hasBracket = true, orientation = "Portrait", pageSize = "Letter", pagePixHeight = 1500, marginAll = 2, zoomFactor = .7 },
-                    new PrintTemplate() {min = 33, max = 64, hasBracket = true, orientation = "Portrait", pageSize = "A2", pagePixHeight = 3000, marginAll = 1.5, zoomFactor = .82 },
-                    new PrintTemplate() {min = 1, max = 32, hasBracket = false, orientation = "Landscape", pageSize = "Letter", pagePixHeight = 840, marginAll = 1, zoomFactor = .95 },
-                    new PrintTemplate() {min = 33, max = 128, hasBracket = false, orientation = "Portrait", pageSize = "Letter", pagePixHeight = 1200, marginAll = 1, zoomFactor = .90}
+                    new PrintTemplate() {min = 4, max = 4, hasBracket = true, ignoreConsolidationRoundSetting = false, consolidationRound = true, orientation = "Landscape", pageSize = "Letter", pagePixHeight = 240, marginAll = 1, zoomFactor = 1.5 },
+                    new PrintTemplate() {min = 1, max = 8, hasBracket = true, ignoreConsolidationRoundSetting = true, orientation = "Landscape", pageSize = "Letter", pagePixHeight = 720, marginAll = 1, zoomFactor = 1.5 },                    
+                    new PrintTemplate() {min = 9, max = 16, hasBracket = true, ignoreConsolidationRoundSetting = true, orientation = "Portrait", pageSize = "Letter", pagePixHeight = 1340, marginAll = 0.5, zoomFactor = .95 },
+                    new PrintTemplate() {min = 17, max = 32, hasBracket = true, ignoreConsolidationRoundSetting = true,orientation = "Portrait", pageSize = "Letter", pagePixHeight = 1500, marginAll = 2, zoomFactor = .7 },
+                    new PrintTemplate() {min = 33, max = 64, hasBracket = true, ignoreConsolidationRoundSetting = true,orientation = "Portrait", pageSize = "A2", pagePixHeight = 3000, marginAll = 1.5, zoomFactor = .82 },
+                    new PrintTemplate() {min = 1, max = 32, hasBracket = false, ignoreConsolidationRoundSetting = true,orientation = "Landscape", pageSize = "Letter", pagePixHeight = 840, marginAll = 1, zoomFactor = .95 },
+                    new PrintTemplate() {min = 33, max = 128, hasBracket = false, ignoreConsolidationRoundSetting = true,orientation = "Portrait", pageSize = "Letter", pagePixHeight = 1200, marginAll = 1, zoomFactor = .90}
                 };
 
             if (id == null)
@@ -382,7 +383,7 @@ namespace TournamentsTreeApp.Controllers
                 //hack - I treat divisions of 1 as flat therefore I need to apply the right rule here
                 if (division.ParticipantDivisionInts.Count == 1)
                 {
-                    var template = templates[4];//hack to get flat of 1
+                    var template = templates[5];//hack to get flat of 1
                     printCommand.Documents.Add(new Subdocument()
                     {
                         Address = Url.AbsoluteAction("PrintSingleDocument", "Tournaments",
@@ -398,7 +399,8 @@ namespace TournamentsTreeApp.Controllers
                     {
 
 
-                        if (template.hasBracket == division.DrawBracket && template.consolidationRound == division.ConsolidationRound && template.min <= division.ParticipantDivisionInts.Count && template.max >= division.ParticipantDivisionInts.Count)
+                        if (template.hasBracket == division.DrawBracket && (template.ignoreConsolidationRoundSetting || template.consolidationRound == division.ConsolidationRound)
+                            && template.min <= division.ParticipantDivisionInts.Count && template.max >= division.ParticipantDivisionInts.Count)
                         {
                             printCommand.Documents.Add(new Subdocument()
                             {
