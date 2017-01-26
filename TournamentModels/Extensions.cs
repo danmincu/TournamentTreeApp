@@ -222,7 +222,7 @@ using System.Data.Entity;
                     {
                         if (participant.School.SchoolId == school.SchoolId)
                             st.AppendLine(string.Format("   {0} {1}", participant.Name, participant.Divisions.Count == 0 ? "WARNING - no division assignment!" : String.Format("[{0}]", 
-                                string.Join(",", participant.Divisions.OrderBy(div=>div.OrderId).Select(div => div.OrderId.ToString()).ToArray()))));
+                                string.Join(",", participant.Divisions.OrderBy(div=>div.OrderId).Select(div => div.Id.ToString()).ToArray()))));
 
                     }
                     st.AppendLine("------------------------------------------------------");
