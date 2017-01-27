@@ -185,7 +185,7 @@ namespace TournamentsTreeApp.Controllers
                 division.DivisionId = Guid.NewGuid();
                 var maxId = db.Divisions.Where(d => d.TournamentId == division.TournamentId).Select(d => d.OrderId).Max();
                 var listOfIds = db.Divisions.Where(d => d.TournamentId == division.TournamentId).Select(d => d.Id).ToList();
-                division.Id = (listOfIds.Select(idl => AlwaysParse(idl)).Max() + 1).ToString();
+                division.Id = listOfIds.Any() ? (listOfIds.Select(idl => AlwaysParse(idl)).Max() + 1).ToString() : "1";
                 division.OrderId = (maxId ?? 0) + 1;
                 db.Divisions.Add(division);
                 db.SaveChanges();
