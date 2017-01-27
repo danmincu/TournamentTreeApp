@@ -37,7 +37,7 @@
     <table class="table">
         <tr>
             <th>Division</th>
-            <th>Participants</th>
+            <th>Competitors</th>
             @if (Request.IsAuthenticated && (User.IsInRole("Administrator") || User.IsInRole(Model.TournamentId.ToString().ToLower())))
             {
             <th>Bracket</th>
